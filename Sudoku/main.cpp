@@ -38,16 +38,19 @@ int main(){
 	srand(unsigned(time(0)));
 	
 	Sudoku problem;	// generates a random problem
-	problem.displaySol();
+    duration = ( clock() - start ) / (double) CLOCKS_PER_SEC;
+    problem.displaySol();
+    cout << "generation duration: " << duration << '\n';
+    
 	problem.solve();
 	problem.displaySol();
 	
-	
+    
 	////////////////////////////
 	
 	
-	duration = ( clock() - start ) / (double) CLOCKS_PER_SEC;
-	cout << "duration: " << duration << '\n';
+	duration = ( clock() - start ) / (double) CLOCKS_PER_SEC - duration ;
+	cout << "solving duration: " << duration << '\n';
 	
 	return 0;
 	

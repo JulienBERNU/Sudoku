@@ -68,6 +68,7 @@ void Sudoku::initialize(){
 
 
 // read the input test file and updates accordingly
+// ONLY VALID FOR BASE<4
 void Sudoku::readFile(string filePath){
 	
 	// Open test problem file
@@ -117,7 +118,7 @@ void Sudoku::update(int row, int col, int value){
 		
 		// 'value' is no longer a possible candidate for the other boxes
 		// in the same row, column or block as [row][col]
-		Coord* b = block[row/3][col/3];
+		Coord* b = block[row/BASE][col/BASE];
 		for (int i=0; i<SIZE; i++) {
 			candidate[row][i][value] = false;				// same row
 			candidate[i][col][value] = false;				// same column
@@ -133,7 +134,7 @@ void Sudoku::update(int row, int col, int value){
 		solution[row][col] = value;
 		rowVal[row][value] = true;
 		colVal[col][value] = true;
-		blockVal[row/3][col/3][value] = true;
+		blockVal[row/BASE][col/BASE][value] = true;
 		
 		nUnknown--;
 		
@@ -147,7 +148,14 @@ void Sudoku::update(int row, int col, int value){
 const void Sudoku::displaySol(){
 	for (int row=0; row<SIZE; row++) {
 		if (!(row%BASE)) {
-			cout << "+---+---+---+" << endl;
+            for (int baseCol=0; baseCol<BASE; baseCol++) {
+                cout << '+';
+                for (int blockCol=0; blockCol<BASE; blockCol++) {
+                    cout << '-';
+                }
+            }
+            cout << '+' << endl;
+//            }---+---+---+" << endl;
 		}
 		for (int col=0; col<SIZE; col++) {
 			if (!(col%BASE)) {
@@ -156,11 +164,22 @@ const void Sudoku::displaySol(){
 			if (solution[row][col] == -1)
 				cout << '.';
 			else
-				cout << solution[row][col]+1;
+                if (solution[row][col]<10) {
+                    cout << solution[row][col];
+                }
+                else {
+                    cout << char(solution[row][col]-9+'A');
+                }
 		}
 		cout << '|' << endl;
 	}
-	cout << "+---+---+---+" << endl;
+    for (int baseCol=0; baseCol<BASE; baseCol++) {
+        cout << '+';
+        for (int blockCol=0; blockCol<BASE; blockCol++) {
+            cout << '-';
+        }
+    }
+    cout << '+' << endl;
 }
 
 
@@ -477,32 +496,78 @@ const bool Sudoku::finalCheck(){
 
 // display the candidates
 const void Sudoku::displayCand(){
+    for (int i=0; i<1+BASE*(2+BASE*(BASE+1)); i++) {
+        cout << '#';
+    }
+    cout << endl;
 	for (int row=0; row<SIZE; row++) {
-		if (!(row%BASE)) {
-			if (row!=0) cout << "#+---+---+---+#+---+---+---+#+---+---+---+#" << endl;
-			cout << "###########################################" << endl;
-		}
-		cout << "#+---+---+---+#+---+---+---+#+---+---+---+#" << endl;
-		for (int base=0; base<BASE; base++) {
-			for (int col=0; col<SIZE; col++) {
-				if (!(col%BASE)) {
-					if (col!=0) cout << "|";
-					cout << "#";
-				}
-				cout << '|';
-				for (int cand=base*BASE; cand<(base+1)*BASE; cand++) {
-					if (candidate[row][col][cand]) {
-						cout << cand+1;
-					}
-					else
-						cout << ' ';
-				}
-			}
-			cout << "|#" << endl;
-		}
-	}
-	cout << "#+---+---+---+#+---+---+---+#+---+---+---+#" << endl;
-	cout << "###########################################" << endl;
+        if (!(row%BASE)) {
+            if (row!=0) {
+                for (int baseCol=0; baseCol<BASE; baseCol++) {
+                    cout << "#+";
+                    for (int blockCol=0; blockCol<BASE; blockCol++) {
+                        for (int candCol=0; candCol<BASE; candCol++) {
+                            cout << '-';
+                        }
+                        cout << '+';
+                    }
+                }
+                cout << '#' << endl;
+                for (int i=0; i<1+BASE*(2+BASE*(BASE+1)); i++) {
+                    cout << '#';
+                }
+                cout << endl;
+            }
+            //            cout << "#+---+---+---+#+---+---+---+#+---+---+---+#" << endl;
+            //        cout << "###########################################" << endl;
+        }
+        for (int baseCol=0; baseCol<BASE; baseCol++) {
+            cout << "#+";
+            for (int blockCol=0; blockCol<BASE; blockCol++) {
+                for (int candCol=0; candCol<BASE; candCol++) {
+                    cout << '-';
+                }
+                cout << '+';
+            }
+        }
+        cout << '#' << endl;
+        for (int base=0; base<BASE; base++) {
+            for (int col=0; col<SIZE; col++) {
+                if (!(col%BASE)) {
+                    if (col!=0) cout << "|";
+                    cout << "#";
+                }
+                cout << '|';
+                for (int cand=base*BASE; cand<(base+1)*BASE; cand++) {
+                    if (candidate[row][col][cand]) {
+                        if (cand<10) {
+                            cout << cand;
+                        }
+                        else {
+                            cout << char(cand-9+'A');
+                        }
+                    }
+                    else
+                        cout << ' ';
+                }
+            }
+            cout << "|#" << endl;
+        }
+    }
+    for (int baseCol=0; baseCol<BASE; baseCol++) {
+        cout << "#+";
+        for (int blockCol=0; blockCol<BASE; blockCol++) {
+            for (int candCol=0; candCol<BASE; candCol++) {
+                cout << '-';
+            }
+            cout << '+';
+        }
+    }
+    cout << '#' << endl;
+    for (int i=0; i<1+BASE*(2+BASE*(BASE+1)); i++) {
+        cout << '#';
+    }
+    cout << endl;
 }
 
 

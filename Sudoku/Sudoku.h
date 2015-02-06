@@ -15,7 +15,8 @@
 #include "StructsAndEnums.h"
 
 
-#define BASE 3
+#define BASE 4
+
 #define SIZE BASE*BASE
 // Sudoku.readFile(), Sudoku.displaySol() and Sudoku.displayCand()
 // all assumes BASE=3 and SIZE=9 !!! Needs modification if BASE>3...
