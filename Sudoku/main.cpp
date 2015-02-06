@@ -2,14 +2,53 @@
 //  main.cpp
 //  Sudoku
 //
-//  Created by Julien on 6/02/2015.
+//  Created by Julien on 29/01/2015.
 //  Copyright (c) 2015 Julien. All rights reserved.
 //
 
-#include <iostream>
 
-int main(int argc, const char * argv[]) {
-	// insert code here...
-	std::cout << "Hello, World!\n";
-    return 0;
+#include <fstream>
+#include <iostream>
+#include <ctime>
+#include <stack>
+#include <cassert>
+#include <string>
+#include <algorithm>
+#include <cstdlib>
+#include <vector>
+#include "Sudoku.h"
+
+using namespace std;
+
+
+
+int main(){
+	
+	clock_t start;
+	double duration;
+	start = clock();
+	
+	
+	////////////////////////////
+	
+//	string filePath = "/Users/Julien/Documents/Programming/Sudoku Project/hardest3.txt";
+//	Sudoku problem(filePath);
+
+	
+	srand(unsigned(time(0)));
+	
+	Sudoku problem;	// generates a random problem
+	problem.displaySol();
+	problem.solve();
+	problem.displaySol();
+	
+	
+	////////////////////////////
+	
+	
+	duration = ( clock() - start ) / (double) CLOCKS_PER_SEC;
+	cout << "duration: " << duration << '\n';
+	
+	return 0;
+	
 }

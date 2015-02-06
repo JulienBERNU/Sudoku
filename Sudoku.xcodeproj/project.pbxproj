@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		F9DAB2831A847012008A4E0F /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F9DAB2821A847012008A4E0F /* main.cpp */; };
+		F9DAB2901A848243008A4E0F /* Sudoku.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F9DAB28B1A848243008A4E0F /* Sudoku.cpp */; };
+		F9DAB2911A848243008A4E0F /* TreeSearch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F9DAB28D1A848243008A4E0F /* TreeSearch.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,6 +27,11 @@
 /* Begin PBXFileReference section */
 		F9DAB27F1A847012008A4E0F /* Sudoku */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Sudoku; sourceTree = BUILT_PRODUCTS_DIR; };
 		F9DAB2821A847012008A4E0F /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		F9DAB28A1A848243008A4E0F /* StructsAndEnums.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructsAndEnums.h; sourceTree = "<group>"; };
+		F9DAB28B1A848243008A4E0F /* Sudoku.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Sudoku.cpp; sourceTree = "<group>"; };
+		F9DAB28C1A848243008A4E0F /* Sudoku.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sudoku.h; sourceTree = "<group>"; };
+		F9DAB28D1A848243008A4E0F /* TreeSearch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TreeSearch.cpp; sourceTree = "<group>"; };
+		F9DAB28E1A848243008A4E0F /* TreeSearch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TreeSearch.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +65,11 @@
 			isa = PBXGroup;
 			children = (
 				F9DAB2821A847012008A4E0F /* main.cpp */,
+				F9DAB28A1A848243008A4E0F /* StructsAndEnums.h */,
+				F9DAB28B1A848243008A4E0F /* Sudoku.cpp */,
+				F9DAB28C1A848243008A4E0F /* Sudoku.h */,
+				F9DAB28D1A848243008A4E0F /* TreeSearch.cpp */,
+				F9DAB28E1A848243008A4E0F /* TreeSearch.h */,
 			);
 			path = Sudoku;
 			sourceTree = "<group>";
@@ -118,6 +130,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F9DAB2911A848243008A4E0F /* TreeSearch.cpp in Sources */,
+				F9DAB2901A848243008A4E0F /* Sudoku.cpp in Sources */,
 				F9DAB2831A847012008A4E0F /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
