@@ -9,7 +9,9 @@
 #ifndef __Sudoku__StructsAndEnums__
 #define __Sudoku__StructsAndEnums__
 
-#include <stdio.h>
+// To reduce compile times, try hard to avoid including header files that are not needed.
+// Not important in your case, but makes a big difference in large projects.
+//#include <stdio.h>
 
 enum checkResult {
 	FOUND_NOTHING,

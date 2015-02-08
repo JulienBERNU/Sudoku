@@ -6,11 +6,14 @@
 //  Copyright (c) 2015 Julien. All rights reserved.
 //
 
+// Always include the header file coresponding to the current .cpp file first.
+// Reason: This assures that all definitions (from other .h files) needed by 
+// your TreeSearch.h file are being explicitly included by TreeSearch.h.
+#include "TreeSearch.h"
+#include "StructsAndEnums.h"
 
 #include <iostream>
 #include <vector>
-#include "TreeSearch.h"
-#include "StructsAndEnums.h"
 
 using namespace std;
 

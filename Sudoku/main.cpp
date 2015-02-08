@@ -18,6 +18,9 @@
 #include <vector>
 #include "Sudoku.h"
 
+// Using namespace std is ok in example code and tiny projects, but should be avoided in larger programs.
+// Reason 1: Makes it clear that "stack" is actually "std::stack" and not something else.
+// Reason 2: Avoids conflict between, for example, a local variable "int stack" and std::stack.
 using namespace std;
 
 

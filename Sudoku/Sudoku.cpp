@@ -27,13 +27,13 @@ using namespace std;
 
 
 // Constructor from a file
-Sudoku::Sudoku(string filePath){
+Sudoku::Sudoku(const string & filePath){
 	initialize();
 	readFile(filePath);
 }
 
 // Constructor form list of hints
-Sudoku::Sudoku(vector<Guess> hints){
+Sudoku::Sudoku(const vector<Guess>& hints){
 	initialize();
 	applyHints(hints);
 }
@@ -69,7 +69,7 @@ void Sudoku::initialize(){
 
 // read the input test file and updates accordingly
 // ONLY VALID FOR BASE<4
-void Sudoku::readFile(string filePath){
+void Sudoku::readFile(const string& filePath){
 	
 	// Open test problem file
 	ifstream file(filePath);
@@ -106,8 +106,11 @@ void Sudoku::readFile(string filePath){
 
 // updates the problem with all given hints
 void Sudoku::applyHints(vector<Guess> hints){
-	for (vector<const Guess>::iterator it=hints.cbegin(); it!=hints.cend(); it++)
-		update(it->coord.row, it->coord.col, it->value);
+    // for (vector<Guess>::const_iterator it=hints.cbegin(); it!=hints.cend(); it++)
+    //   update(it->coord.row, it->coord.col, it->value);
+    // if you're using c++11 anyway, using range based for loops is much nicer IMO
+    for (const Guess & guess : hints)
+        update(guess.coord.row, guess.coord.col, guess.value);
 }
 
 
@@ -145,7 +148,7 @@ void Sudoku::update(int row, int col, int value){
 
 
 // display the solution
-const void Sudoku::displaySol(){
+void Sudoku::displaySol() const {
 	for (int row=0; row<SIZE; row++) {
 		if (!(row%BASE)) {
             for (int baseCol=0; baseCol<BASE; baseCol++) {
@@ -238,7 +241,7 @@ checkResult Sudoku::checkRowObvious(int row, int value){
 // check if a row has a unique box (or column) left with 'value' as possible candidate
 // and if so update accordingly
 // Returns either FOUND_NOTHING (0), FOUND_SOMETHING (1) or FOUND_ERROR (2)
-checkResult Sudoku::checkColObvious(int col, int value){
+checkResult Sudoku::checkColObvious(int col, int value) {
 	int nRow = 0;
 	int row = 0;
 	int uniqueRow = 0;
@@ -264,7 +267,7 @@ checkResult Sudoku::checkColObvious(int col, int value){
 // check if a block has a unique box left with 'value' as possible candidate
 // and if so update accordingly
 // Returns either FOUND_NOTHING (0), FOUND_SOMETHING (1) or FOUND_ERROR (2)
-checkResult Sudoku::checkBlockObvious(int baseRow, int baseCol, int value){
+checkResult Sudoku::checkBlockObvious(int baseRow, int baseCol, int value) {
 	int nBox = 0;
 	int i = 0;
 	int unique_i = 0;
@@ -359,7 +362,7 @@ checkResult Sudoku::checkObvious(){
 
 // find the first (or random) undetermined box
 // return true if there is one, false otherwise (meaning the grid is solved)
-const bool Sudoku::getFirstUnknown(Coord &c){
+bool Sudoku::getFirstUnknown(Coord &c) const{
 	for (int row=0; row<SIZE; row++) {
 		for (int col=0; col<SIZE; col++) {
 			if (solution[row][col] == -1) {

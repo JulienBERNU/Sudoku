@@ -9,15 +9,23 @@
 #ifndef __Sudoku_Project__Sudoku__
 #define __Sudoku_Project__Sudoku__
 
+#include "StructsAndEnums.h"
+
 #include <stdio.h>
 #include <string>
 #include <vector>
-#include "StructsAndEnums.h"
 
 
-#define BASE 4
+//#define BASE 3
+// Avoid using #define as much as possible. "const int" works just as well, and tells the compiler 
+// that BASE is actually an int (and not just an arbitrary  string of letters), which may lead to 
+// more readable error messages and error detection.
+const int BASE = 3;
 
-#define SIZE BASE*BASE
+//#define SIZE BASE*BASE
+const int SIZE = BASE*BASE;
+
+
 // Sudoku.readFile(), Sudoku.displaySol() and Sudoku.displayCand()
 // all assumes BASE=3 and SIZE=9 !!! Needs modification if BASE>3...
 
@@ -54,10 +62,20 @@ class Sudoku{
 public:
 	
 	// Constructor from a file
-	Sudoku(string filePath);
+//	Sudoku(string filePath);
+    
+    // Change 1: For clarity (and sometimes to help the compiler optimize) make function parameters 
+    //           that you are not changing in your function 'const'
+    // Change 2: When passing a const function parameter that may be large, it's usually faster
+    //           to pass a reference to it rather than making a copy. For std::strings, this may
+    //           be unnecessary with modern c++ compilers, but it doesn't hurt.
+	Sudoku(const string& filePath);
+
 	
 	// Constructor from list of hints
-	Sudoku(vector<Guess> hints);
+    // Change: passing as a const reference instead of sending a copy. If vector<Guess> is large, 
+    //         this is certainly going to be more efficient.
+	Sudoku(const vector<Guess>& hints);
 	
 	// Random Constructor
 	Sudoku();
@@ -67,7 +85,7 @@ public:
 	
 	
 	// read the input test file and updates accordingly
-	void readFile(string filePath);
+	void readFile(const string& filePath);
 	
 	
 	void applyHints(vector<Guess> hints);
@@ -78,7 +96,11 @@ public:
 	
 	
 	// display the solution
-	const void displaySol();
+//	const void displaySol();
+    // Your declaration says that the function returns a "void" which is "const", which isn't useful atall.
+    // Now, with "const" at the end of the declaration, it says that displaySol() is a const member function, 
+    // and will not modify the Sudoku object.
+	void displaySol() const;
 	
 	
 	// check if a box has a unique candidate left
@@ -112,8 +134,10 @@ public:
 	
 	// find the first undetermined box
 	// return true if there is one, false otherwise (meaning the grid is solved)
-	const bool getFirstUnknown(Coord &c);
-	
+	//const bool getFirstUnknown(Coord &c);
+    // Same error as above, your const refer to the bool instead of the member function.
+    bool getFirstUnknown(Coord &c) const;
+
 	// find a random undetermined box
 	// return true if there is one, false otherwise (meaning the grid is solved)
 	const bool getRandomUnknown(Coord &c);
