@@ -33,11 +33,9 @@ class TreeSearch{
     std::stack<Guess> allGuesses;	// contains the guess history
     std::stack<Sudoku*> allStatesBeforeGuesses;
 	
+	stack<Guess> log[SIZE*SIZE];
 	
-	
-	std::vector<int> second (4,100);
-	
-	vector<stack<Guess>> log(SIZE*SIZE, stack<Guess>); 
+//	vector<stack<Guess>> log(SIZE*SIZE, stack<Guess>); 
 	int depth = 0;
 
 

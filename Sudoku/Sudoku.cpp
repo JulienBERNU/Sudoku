@@ -422,9 +422,9 @@ int Sudoku::getRandomCand(int row, int col) const{
 	int cand=0;
 	while (nCand!=0) {
 		while (!candidate[row][col][cand]) cand++;
+		cand++;
 		nCand--;
 	}
-	
 	return cand;
 }
 
