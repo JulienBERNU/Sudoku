@@ -142,7 +142,7 @@ vector<Guess> TreeSearch::generateHints(Sudoku* problem){
 				break;
 		}
 	}
-	
+	 
 	// bactrack to check wether all guesses wouldn't actually have been forced
 	vector<Guess> hints;	// contains the hints already identified as necessary
 	while (!allGuesses.empty()) {
