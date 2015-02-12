@@ -11,7 +11,7 @@
 // your TreeSearch.h file are being explicitly included by TreeSearch.h.
 #include "TreeSearch.h"
 #include "StructsAndEnums.h"
-
+#include <fstream>
 #include <iostream>
 #include <vector>
 
@@ -22,6 +22,8 @@ using namespace std;
 void TreeSearch::newGuess(Coord c, int value, Sudoku* current){
 	Sudoku* copy = new Sudoku(*current);
 	Guess guess = {c,value};
+//	log[depth].push(guess);
+	depth++;
 	allGuesses.push(guess);
 	allStatesBeforeGuesses.push(copy);
 }
@@ -33,6 +35,8 @@ bool TreeSearch::backtrack(Sudoku* &current){
 		// no bactracking possible
 		return false;
 	// backtrack: we go back to before the last guess
+//	while (!log[depth].empty()) log[depth].pop();
+	depth--;
 	delete current;
 	Guess lastGuess = allGuesses.top();
 	allGuesses.pop();
@@ -106,6 +110,9 @@ bool TreeSearch::findSol(Sudoku* problem, bool applySol){
 // Generate a list a 'hints' defining a random problem with unique solution
 vector<Guess> TreeSearch::generateHints(Sudoku* problem){
 	
+
+
+	
 	// Start by finding a random solution (normally from an empty problem)
 	// This is very similar to findSol(problem, false)
 	// Possible to avoid duplicate code?
@@ -121,6 +128,7 @@ vector<Guess> TreeSearch::generateHints(Sudoku* problem){
 					// there's still some undetermined box >> make a new guess
 					int value = current->getRandomCand(c.row,c.col);	// Seach randomly to generate random problems
 					newGuess(c,value,current);
+					Guess guess = {c,value};
 					current->update(c.row,c.col,value);
 				}
 				else {
@@ -149,6 +157,24 @@ vector<Guess> TreeSearch::generateHints(Sudoku* problem){
 		}
 	}
 	
+	
+//	string filePath = "/Users/Julien/Desktop/Sudoku/log.txt";
+//	std::ofstream file(filePath);
+//	if (!file) {
+//		cerr << "Input file could not be opened!" << endl;
+//		exit(1);
+//	}
+//	for (int i=0; i<depth; i++) {
+//		file << "depth " << depth <<":\n";
+//		while (!log[depth].empty()) {
+//			Guess g = log[depth].top();
+//			file << g.value << " at " << g.coord.row << g.coord.col << endl;
+//			log[depth].pop();
+//		}
+//		file << endl;
+//	}
+	
+	
 	// clean up memory
 	delete current;
 	clear(); // should not be necessary
@@ -166,7 +192,7 @@ vector<Guess> TreeSearch::generateHints(Sudoku* problem){
 
 // Count the number of possible solutions
 // Returns either NONE (0), UNIQUE (1) or SEVERAL (2)
-NumSol TreeSearch::findAllSol(Sudoku* problem){
+NumSol TreeSearch::findAllSol(const Sudoku* problem){
 	
 	NumSol nSol = NONE;
 	bool finished = false;

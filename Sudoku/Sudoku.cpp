@@ -19,7 +19,6 @@
 #include <algorithm>
 #include <cstdlib>
 #include <vector>
-#include "Sudoku.h"
 #include "TreeSearch.h"
 
 using namespace std;
@@ -105,7 +104,7 @@ void Sudoku::readFile(const string& filePath){
 
 
 // updates the problem with all given hints
-void Sudoku::applyHints(vector<Guess> hints){
+void Sudoku::applyHints(const vector<Guess>& hints){
     // for (vector<Guess>::const_iterator it=hints.cbegin(); it!=hints.cend(); it++)
     //   update(it->coord.row, it->coord.col, it->value);
     // if you're using c++11 anyway, using range based for loops is much nicer IMO
@@ -378,7 +377,7 @@ bool Sudoku::getFirstUnknown(Coord &c) const{
 
 // find a random undetermined box
 // return true if there is one, false otherwise (meaning the grid is solved)
-const bool Sudoku::getRandomUnknown(Coord &c){
+bool Sudoku::getRandomUnknown(Coord &c) const{
 	if (nUnknown==0)
 		return false;
 	int n = rand()%nUnknown + 1;
@@ -401,14 +400,14 @@ const bool Sudoku::getRandomUnknown(Coord &c){
 
 
 // find the first candidate of box [row][col]
-const int Sudoku::getFirstCand(int row, int col){
+int Sudoku::getFirstCand(int row, int col) const{
 	int cand=0;
 	while (!candidate[row][col][cand]) cand++;
 	return cand;
 }
 
 // find a random candidate from box [row][col]
-const int Sudoku::getRandomCand(int row, int col){
+int Sudoku::getRandomCand(int row, int col) const{
 	
 	int nCand = 0;
 	// count the number of candidates left
@@ -450,7 +449,7 @@ bool Sudoku::solve(bool applySol){
 
 // Count the number of possible solutions
 // Returns either NONE (0), UNIQUE (1) or SEVERAL (2)
-NumSol Sudoku::findAllSol() {
+NumSol Sudoku::findAllSol() const{
 	TreeSearch Search;
 	return Search.findAllSol(this);
 }
@@ -458,7 +457,7 @@ NumSol Sudoku::findAllSol() {
 
 
 // check if the final solution is valid
-const bool Sudoku::finalCheck(){
+bool Sudoku::finalCheck() const{
 	// check rows
 	for (int row=0; row<SIZE; row++) {
 		for (int value=0; value<SIZE; value++) {
@@ -484,7 +483,7 @@ const bool Sudoku::finalCheck(){
 		for (int baseCol=0; baseCol<BASE; baseCol++) {
 			for (int value=0; value<SIZE; value++) {
 				int n = 0;
-				Coord* box = block[baseRow][baseCol];
+				const Coord* box = block[baseRow][baseCol];
 				for (int i=0; i<SIZE; i++) {
 					if (solution[box[i].row][box[i].col]==value) n++;
 				}
@@ -498,7 +497,7 @@ const bool Sudoku::finalCheck(){
 
 
 // display the candidates
-const void Sudoku::displayCand(){
+void Sudoku::displayCand() const{
     for (int i=0; i<1+BASE*(2+BASE*(BASE+1)); i++) {
         cout << '#';
     }
@@ -520,9 +519,7 @@ const void Sudoku::displayCand(){
                     cout << '#';
                 }
                 cout << endl;
-            }
-            //            cout << "#+---+---+---+#+---+---+---+#+---+---+---+#" << endl;
-            //        cout << "###########################################" << endl;
+			}
         }
         for (int baseCol=0; baseCol<BASE; baseCol++) {
             cout << "#+";
@@ -572,7 +569,6 @@ const void Sudoku::displayCand(){
     }
     cout << endl;
 }
-
 
 
 

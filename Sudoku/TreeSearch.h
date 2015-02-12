@@ -32,6 +32,13 @@ class TreeSearch{
 	
     std::stack<Guess> allGuesses;	// contains the guess history
     std::stack<Sudoku*> allStatesBeforeGuesses;
+	
+	
+	
+	std::vector<int> second (4,100);
+	
+	vector<stack<Guess>> log(SIZE*SIZE, stack<Guess>);
+	int depth = 0;
 
 
 public:
@@ -44,7 +51,7 @@ public:
 	
 	bool findSol(Sudoku* problem, bool applySol);
 	
-	NumSol findAllSol(Sudoku* problem);
+	NumSol findAllSol(const Sudoku* problem);
 	
 	vector<Guess> generateHints(Sudoku* problem);
 	

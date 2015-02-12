@@ -27,7 +27,7 @@ using namespace std;
 
 int main(){
 	
-	clock_t start;
+	clock_t start, iStart;
 	double duration;
 	start = clock();
 	
@@ -40,20 +40,33 @@ int main(){
 	
 	srand(unsigned(time(0)));
 	
-	Sudoku problem;	// generates a random problem
-    duration = ( clock() - start ) / (double) CLOCKS_PER_SEC;
-    problem.displaySol();
-    cout << "generation duration: " << duration << '\n';
-    
-	problem.solve();
-	problem.displaySol();
+	for (int i=0; i<10;i++) {
+		
+		iStart = clock();
+		Sudoku problem;	// generates a random problem
+		//		problem.displaySol();
+		duration = ( clock() - iStart ) / (double) CLOCKS_PER_SEC;
+		cout << i << " generation: " << duration << '\n';
+		assert(duration<1);
+		
+		iStart = clock();
+		problem.solve();
+		assert(problem.finalCheck());
+		//		problem.displaySol();
+		assert(problem.findAllSol()==UNIQUE);
+		duration = ( clock() - iStart ) / (double) CLOCKS_PER_SEC;
+		cout << i << " solving: " << duration << '\n';
+		assert(duration<1);
+		
+		cout << endl;
+	}
 	
-    
+		
 	////////////////////////////
 	
 	
-	duration = ( clock() - start ) / (double) CLOCKS_PER_SEC - duration ;
-	cout << "solving duration: " << duration << '\n';
+	duration = ( clock() - start ) / (double) CLOCKS_PER_SEC;
+	cout << "total duration: " << duration << '\n';
 	
 	return 0;
 	

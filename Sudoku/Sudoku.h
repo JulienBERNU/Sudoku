@@ -11,13 +11,13 @@
 
 #include "StructsAndEnums.h"
 
-#include <stdio.h>
+//#include <stdio.h>
 #include <string>
 #include <vector>
 
 
 //#define BASE 3
-// Avoid using #define as much as possible. "const int" works just as well, and tells the compiler 
+// Avoid using #define as much as possible. "const int" works just as well, and tells the compiler
 // that BASE is actually an int (and not just an arbitrary  string of letters), which may lead to 
 // more readable error messages and error detection.
 const int BASE = 3;
@@ -88,7 +88,7 @@ public:
 	void readFile(const string& filePath);
 	
 	
-	void applyHints(vector<Guess> hints);
+	void applyHints(const vector<Guess>& hints);
 	
 	
 	// update 'solution' and 'candidate', 'rowVal, ... accordingly
@@ -140,14 +140,14 @@ public:
 
 	// find a random undetermined box
 	// return true if there is one, false otherwise (meaning the grid is solved)
-	const bool getRandomUnknown(Coord &c);
+	bool getRandomUnknown(Coord &c) const;
 	
 	
 	// find the first candidate of box [row][col]
-	const int getFirstCand(int row, int col);
+	int getFirstCand(int row, int col) const;
 	
 	// find the first candidate of box [row][col]
-	const int getRandomCand(int row, int col);
+	int getRandomCand(int row, int col) const;
 	
 	
 	// remove candidate 'value' from box [row][col]
@@ -165,15 +165,15 @@ public:
 	
 	// Count the number of possible solutions
 	// Returns either NONE (0), UNIQUE (1) or SEVERAL (2)
-	NumSol findAllSol();
+	NumSol findAllSol() const;
 	
 	
 	// check if the final solution is valid
-	const bool finalCheck();
+	bool finalCheck() const;
 	
 	
 	// display the candidates
-	const void displayCand();
+	void displayCand() const;
 	
 	
 };
