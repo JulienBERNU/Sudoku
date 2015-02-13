@@ -6,6 +6,7 @@
 //  Copyright (c) 2015 Julien. All rights reserved.
 //
 
+#include "Sudoku.h"
 
 #include <fstream>
 #include <iostream>
@@ -16,7 +17,6 @@
 #include <algorithm>
 #include <cstdlib>
 #include <vector>
-#include "Sudoku.h"
 
 // Using namespace std is ok in example code and tiny projects, but should be avoided in larger programs.
 // Reason 1: Makes it clear that "stack" is actually "std::stack" and not something else.
@@ -41,7 +41,7 @@ int main(){
 	
 	srand(unsigned(time(0)));
 	
-	for (int i=0; i<1;i++) {
+	for (int i=0; i<1000;i++) {
 		
 		iStart = clock();
 		Sudoku problem;	// generates a random problem
@@ -62,7 +62,8 @@ int main(){
 		cout << endl;
 	}
 	
-		
+	
+	
 	////////////////////////////
 	
 	

@@ -11,6 +11,7 @@
 // your TreeSearch.h file are being explicitly included by TreeSearch.h.
 #include "TreeSearch.h"
 #include "StructsAndEnums.h"
+
 #include <fstream>
 #include <iostream>
 #include <vector>
@@ -73,7 +74,7 @@ bool TreeSearch::findSol(Sudoku* problem, bool applySol){
 			case FOUND_NOTHING:
 				// no more obvious move
 				Coord c;
-				if (current->getFirstUnknown(c)) {						// Search systematically: first unknown box
+				if (current->getFirstUnknown(c)) {									// Search systematically: first unknown box
 					// there's still some undetermined box >> make a new guess
 					int value = current->getFirstCand(c.row,c.col);		// Search systematically: first candidate
 					newGuess(c,value,current);
@@ -124,7 +125,7 @@ vector<Guess> TreeSearch::generateHints(Sudoku* problem){
 			case FOUND_NOTHING:
 				// no more obvious move
 				Coord c;
-				if (current->getRandomUnknown(c)) {						// Seach randomly to generate random problems
+				if (current->getRandomUnknown(c)) {							// Seach randomly to generate random problems
 					// there's still some undetermined box >> make a new guess
 					int value = current->getRandomCand(c.row,c.col);	// Seach randomly to generate random problems
 					newGuess(c,value,current);
@@ -155,12 +156,12 @@ vector<Guess> TreeSearch::generateHints(Sudoku* problem){
 		file << "depth " << i <<":\n";
 		while (!log[i].empty()) {
 			Guess g = log[i].top();
-			file << g.value << " at " << g.coord.row << g.coord.col << endl;
+			file << g.value+1 << " at " << g.coord.row+1 << g.coord.col+1 << endl;
 			log[i].pop();
 		}
 		file << endl;
 	}
-	 
+	
 	// bactrack to check wether all guesses wouldn't actually have been forced
 	vector<Guess> hints;	// contains the hints already identified as necessary
 //	while (!allGuesses.empty()) {

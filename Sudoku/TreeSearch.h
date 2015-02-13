@@ -14,28 +14,17 @@
 #include "StructsAndEnums.h"
 
 // system headers last
-//#include <stdio.h>
 #include <stack>
 #include <vector>
 
 
 class TreeSearch{
 	
-//	stack<Sudoku*> SudokuStack;		// contains the series of the temporary grid states as guesses are made
-//	stack<Coord> coordStack;		// contains the series of Coord's where the guesses are made
-//	stack<int> valueStack;			// contains the series of values for the guesses
-
-	//stack<Guess> allGuesses;	// contains the guess history
-	//stack<Sudoku*> allStatesBeforeGuesses;
-    // This assumes that someone including this header have already done "using namespace std;"
-    // I'd definitively state std:: explicitly at least in header files.
-	
-    std::stack<Guess> allGuesses;	// contains the guess history
-    std::stack<Sudoku*> allStatesBeforeGuesses;
+	std::stack<Guess> allGuesses;	// contains the guess history
+	std::stack<Sudoku*> allStatesBeforeGuesses;
 	
 	stack<Guess> log[SIZE*SIZE];
 	
-//	vector<stack<Guess>> log(SIZE*SIZE, stack<Guess>); 
 	int depth = 0;
 
 

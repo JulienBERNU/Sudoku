@@ -7,8 +7,7 @@
 //
 
 #include "Sudoku.h"
-
-
+#include "TreeSearch.h"
 
 #include <fstream>
 #include <iostream>
@@ -19,7 +18,6 @@
 #include <algorithm>
 #include <cstdlib>
 #include <vector>
-#include "TreeSearch.h"
 
 using namespace std;
 
@@ -105,9 +103,6 @@ void Sudoku::readFile(const string& filePath){
 
 // updates the problem with all given hints
 void Sudoku::applyHints(const vector<Guess>& hints){
-    // for (vector<Guess>::const_iterator it=hints.cbegin(); it!=hints.cend(); it++)
-    //   update(it->coord.row, it->coord.col, it->value);
-    // if you're using c++11 anyway, using range based for loops is much nicer IMO
     for (const Guess & guess : hints)
         update(guess.coord.row, guess.coord.col, guess.value);
 }
@@ -122,8 +117,8 @@ void Sudoku::update(int row, int col, int value){
 		// in the same row, column or block as [row][col]
 		Coord* b = block[row/BASE][col/BASE];
 		for (int i=0; i<SIZE; i++) {
-			candidate[row][i][value] = false;				// same row
-			candidate[i][col][value] = false;				// same column
+			candidate[row][i][value] = false;						// same row
+			candidate[i][col][value] = false;						// same column
 			candidate[b[i].row][b[i].col][value] = false;	// same block
 		}
 		// the other candidates for this box are also no longer possible
@@ -157,7 +152,6 @@ void Sudoku::displaySol() const {
                 }
             }
             cout << '+' << endl;
-//            }---+---+---+" << endl;
 		}
 		for (int col=0; col<SIZE; col++) {
 			if (!(col%BASE)) {
@@ -425,6 +419,7 @@ int Sudoku::getRandomCand(int row, int col) const{
 		cand++;
 		nCand--;
 	}
+	cand--;
 	return cand;
 }
 
