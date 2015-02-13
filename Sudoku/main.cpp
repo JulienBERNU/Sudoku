@@ -41,7 +41,7 @@ int main(){
 	
 	srand(unsigned(time(0)));
 	
-	for (int i=0; i<1000;i++) {
+	for (int i=0; i<10;i++) {
 		
 		iStart = clock();
 		Sudoku problem;	// generates a random problem

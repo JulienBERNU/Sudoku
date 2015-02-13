@@ -23,8 +23,8 @@ using namespace std;
 void TreeSearch::newGuess(Coord c, int value, Sudoku* current){
 	Sudoku* copy = new Sudoku(*current);
 	Guess guess = {c,value};
-	log[depth].push(guess);
-	depth++;
+//	log[depth].push(guess);
+//	depth++;
 	allGuesses.push(guess);
 	allStatesBeforeGuesses.push(copy);
 }
@@ -36,8 +36,8 @@ bool TreeSearch::backtrack(Sudoku* &current){
 		// no bactracking possible
 		return false;
 	// backtrack: we go back to before the last guess
-	while (!log[depth].empty()) log[depth].pop();
-	depth--;
+//	while (!log[depth].empty()) log[depth].pop();
+//	depth--;
 	delete current;
 	Guess lastGuess = allGuesses.top();
 	allGuesses.pop();
@@ -144,41 +144,37 @@ vector<Guess> TreeSearch::generateHints(Sudoku* problem){
 		}
 	}
 	
-	string filePath = "/Users/Julien/Desktop/Sudoku/log.txt";
-	std::ofstream file(filePath);
-	if (!file) {
-		cerr << "Input file could not be opened!" << endl;
-		exit(1);
-	}
-	file << "total depth: " << depth << endl;
-	
-	for (int i=0; i<depth; i++) {
-		file << "depth " << i <<":\n";
-		while (!log[i].empty()) {
-			Guess g = log[i].top();
-			file << g.value+1 << " at " << g.coord.row+1 << g.coord.col+1 << endl;
-			log[i].pop();
-		}
-		file << endl;
-	}
+//	string filePath = "/Users/Julien/Desktop/Sudoku/log.txt";
+//	std::ofstream file(filePath);
+//	if (!file) {
+//		cerr << "Input file could not be opened!" << endl;
+//		exit(1);
+//	}
+//	file << "total depth: " << depth << endl;
+//	
+//	for (int i=0; i<depth; i++) {
+//		file << "depth " << i <<":\n";
+//		while (!log[i].empty()) {
+//			Guess g = log[i].top();
+//			file << g.value+1 << " at " << g.coord.row+1 << g.coord.col+1 << endl;
+//			log[i].pop();
+//		}
+//		file << endl;
+//	}
 	
 	// bactrack to check wether all guesses wouldn't actually have been forced
 	vector<Guess> hints;	// contains the hints already identified as necessary
-//	while (!allGuesses.empty()) {
-//		Guess lastGuess = allGuesses.top();
-//		backtrack(current);
-//		// apply all hints already identified
-//		current->applyHints(hints);
-//		if (current->solve(false)){
-//			// another solution was found after backtracking
-//			// >> last guess is a necessary hint to reach our solution
-//			hints.push_back(lastGuess);
-//		}
-//	}
-	
-	
-	
-	
+	while (!allGuesses.empty()) {
+		Guess lastGuess = allGuesses.top();
+		backtrack(current);
+		// apply all hints already identified
+		current->applyHints(hints);
+		if (current->solve(false)){
+			// another solution was found after backtracking
+			// >> last guess is a necessary hint to reach our solution
+			hints.push_back(lastGuess);
+		}
+	}
 	
 	// clean up memory
 	delete current;
