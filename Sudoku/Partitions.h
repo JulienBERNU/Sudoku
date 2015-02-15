@@ -13,31 +13,33 @@
 #include <vector>
 
 
-class Partitions {
+namespace Partitions {
     
-    int size;
-    std::vector<int*>* partitions;
+//    int size;
+//    std::vector<int*>* partitions;
     
-    void fill(int* part, int partSize);
+    void fill(int* part, int partSize, std::vector<int*>* partitions);
     
-    void completeAndFillPart(int* part, int currentSize, int partSize);
+    void completeAndFillPart(int* part, int currentSize, int partSize, int range, std::vector<int*>* partitions);
     
-    void fillAllSizedParts(int partSize);
+    void fillAllSizedParts(int partSize, int range, std::vector<int*>* partitions);
     
-    void fillAllParts();
+    void fillAllParts(int range, std::vector<int*>* partitions);
     
-    void printAllSizedParts(int partSize) const;
-    
-    
-    
-public:
+    int* complementPart(const int* part, int partSize, int range);
     
     
-    void printAllParts() const;
     
-    void printPart(const int* part, int partSize) const;
+    void printPart(const int* part, int partSize);
     
-    Partitions(int maxSize);
+    void printSizedParts(int partSize, std::vector<int*>& sizedPartitions);
+    
+    void printRangedParts(int range, std::vector<int*>* partitions);
+    
+    void printAllParts(int SIZE, std::vector<int*>** partitions);
+    
+    
+//    Partitions(int size);
     
     
 };

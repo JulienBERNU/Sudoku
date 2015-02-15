@@ -110,79 +110,83 @@ bool TreeSearch::findSol(Sudoku* problem, bool applySol){
 
 // Generate a list a 'hints' defining a random problem with unique solution
 vector<Guess> TreeSearch::generateHints(Sudoku* problem){
-	
-
-
-	
-	// Start by finding a random solution (normally from an empty problem)
-	// This is very similar to findSol(problem, false)
-	// Possible to avoid duplicate code?
-	Sudoku* current = new Sudoku(*problem);
-	bool finished = false;
-	while (!finished) {
-		checkResult check = current->checkObvious(); // do all obvious checks until no more progress or error...
-		switch (check){
-			case FOUND_NOTHING:
-				// no more obvious move
-				Coord c;
-				if (current->getRandomUnknown(c)) {							// Seach randomly to generate random problems
-					// there's still some undetermined box >> make a new guess
-					int value = current->getRandomCand(c.row,c.col);	// Seach randomly to generate random problems
-					newGuess(c,value,current);
-					Guess guess = {c,value};
-					current->update(c.row,c.col,value);
-				}
-				else {
-					// there aren't any undetermined boxes >> we've found a solution!
-					finished = true;
-				}
-				break;
-			case FOUND_ERROR:
-				// reached a dead-end
-				backtrack(current);
-				break;
-		}
-	}
-	
-//	string filePath = "/Users/Julien/Desktop/Sudoku/log.txt";
-//	std::ofstream file(filePath);
-//	if (!file) {
-//		cerr << "Input file could not be opened!" << endl;
-//		exit(1);
-//	}
-//	file << "total depth: " << depth << endl;
-//	
-//	for (int i=0; i<depth; i++) {
-//		file << "depth " << i <<":\n";
-//		while (!log[i].empty()) {
-//			Guess g = log[i].top();
-//			file << g.value+1 << " at " << g.coord.row+1 << g.coord.col+1 << endl;
-//			log[i].pop();
-//		}
-//		file << endl;
-//	}
-	
-	// bactrack to check wether all guesses wouldn't actually have been forced
-	vector<Guess> hints;	// contains the hints already identified as necessary
-	while (!allGuesses.empty()) {
-		Guess lastGuess = allGuesses.top();
-		backtrack(current);
-		// apply all hints already identified
-		current->applyHints(hints);
-		if (current->solve(false)){
-			// another solution was found after backtracking
-			// >> last guess is a necessary hint to reach our solution
-			hints.push_back(lastGuess);
-		}
-	}
-	
-	// clean up memory
-	delete current;
-	clear(); // should not be necessary
-	
-	return hints;
-	
-	
+    
+    
+    
+    
+    // Start by finding a random solution (normally from an empty problem)
+    // This is very similar to findSol(problem, false)
+    // Possible to avoid duplicate code?
+    Sudoku* current = new Sudoku(*problem);
+    bool finished = false;
+    while (!finished) {
+        checkResult check = current->checkObvious(); // do all obvious checks until no more progress or error...
+        switch (check){
+            case FOUND_NOTHING:
+//                cout << "check part row \n";
+                current->checkAllPartRow();
+                current->checkAllPartCol();
+                current->checkAllPartBlock();
+                // no more obvious move
+                Coord c;
+                if (current->getRandomUnknown(c)) {							// Seach randomly to generate random problems
+                    // there's still some undetermined box >> make a new guess
+                    int value = current->getRandomCand(c.row,c.col);	// Seach randomly to generate random problems
+                    newGuess(c,value,current);
+                    Guess guess = {c,value};
+                    current->update(c.row,c.col,value);
+                }
+                else {
+                    // there aren't any undetermined boxes >> we've found a solution!
+                    finished = true;
+                }
+                break;
+            case FOUND_ERROR:
+                // reached a dead-end
+                backtrack(current);
+                break;
+        }
+    }
+    
+    //	string filePath = "/Users/Julien/Desktop/Sudoku/log.txt";
+    //	std::ofstream file(filePath);
+    //	if (!file) {
+    //		cerr << "Input file could not be opened!" << endl;
+    //		exit(1);
+    //	}
+    //	file << "total depth: " << depth << endl;
+    //
+    //	for (int i=0; i<depth; i++) {
+    //		file << "depth " << i <<":\n";
+    //		while (!log[i].empty()) {
+    //			Guess g = log[i].top();
+    //			file << g.value+1 << " at " << g.coord.row+1 << g.coord.col+1 << endl;
+    //			log[i].pop();
+    //		}
+    //		file << endl;
+    //	}
+    
+    // bactrack to check wether all guesses wouldn't actually have been forced
+    vector<Guess> hints;	// contains the hints already identified as necessary
+    while (!allGuesses.empty()) {
+        Guess lastGuess = allGuesses.top();
+        backtrack(current);
+        // apply all hints already identified
+        current->applyHints(hints);
+        if (current->solve(false)){
+            // another solution was found after backtracking
+            // >> last guess is a necessary hint to reach our solution
+            hints.push_back(lastGuess);
+        }
+    }
+    
+    // clean up memory
+    delete current;
+    clear(); // should not be necessary
+    
+    return hints;
+    
+    
 }
 
 

@@ -28,56 +28,57 @@ using namespace std;
 
 
 int main(){
-	
-	clock_t start, iStart;
-	double duration;
-	start = clock();
-	
-	
-	////////////////////////////
-	
-//	string filePath = "/Users/Julien/Documents/Programming/Sudoku Project/hardest3.txt";
-//	Sudoku problem(filePath);
-
-	
-	srand(unsigned(time(0)));
-	
-	for (int i=0; i<1;i++) {
-		
-		iStart = clock();
-		Sudoku problem;	// generates a random problem
-		//		problem.displaySol();
-		duration = ( clock() - iStart ) / (double) CLOCKS_PER_SEC;
-		cout << i << " generation: " << duration << '\n';
-		assert(duration<1);
-		
-		iStart = clock();
-		problem.solve();
-		assert(problem.finalCheck());
-		//		problem.displaySol();
-		assert(problem.findAllSol()==UNIQUE);
-		duration = ( clock() - iStart ) / (double) CLOCKS_PER_SEC;
-		cout << i << " solving: " << duration << '\n';
-		assert(duration<1);
-		
-		cout << endl;
-	}
-	
-	
-	
-	////////////////////////////
-	
-	
-	duration = ( clock() - start ) / (double) CLOCKS_PER_SEC;
-	cout << "total duration: " << duration << '\n';
     
-//    int ensemble[] = {1,42,3,24};
-//    void (*actionToPerform)(const int*, int) = Partitions::printPart;
-//    Partitions::scanAllParts(4, actionToPerform);
-//    actionToPerform(part,4);
+    clock_t start, iStart;
+    double duration;
+    start = clock();
     
-    Sudoku::P.printAllParts();
     
-	return 0;
-	
+    ////////////////////////////
+    
+    //	string filePath = "/Users/Julien/Documents/Programming/Sudoku Project/hardest3.txt";
+    //	Sudoku problem(filePath);
+    
+    
+    	srand(unsigned(time(0)));
+    
+    	for (int i=0; i<1;i++) {
+    
+    		iStart = clock();
+    		Sudoku problem;	// generates a random problem
+    		//		problem.displaySol();
+    		duration = ( clock() - iStart ) / (double) CLOCKS_PER_SEC;
+    		cout << i << " generation: " << duration << '\n';
+    		assert(duration<1);
+    
+    		iStart = clock();
+    		problem.solve();
+    		assert(problem.finalCheck());
+    		//		problem.displaySol();
+    		assert(problem.findAllSol()==UNIQUE);
+    		duration = ( clock() - iStart ) / (double) CLOCKS_PER_SEC;
+    		cout << i << " solving: " << duration << '\n';
+    		assert(duration<1);
+    
+    		cout << endl;
+    	}
+    
+    
+    
+    ////////////////////////////
+    
+    
+    duration = ( clock() - start ) / (double) CLOCKS_PER_SEC;
+    cout << "total duration: " << duration << '\n';
+    
+    //    int ensemble[] = {1,42,3,24};
+    //    void (*actionToPerform)(const int*, int) = Partitions::printPart;
+    //    Partitions::scanAllParts(4, actionToPerform);
+    //    actionToPerform(part,4);
+    
+    
+//    Partitions::printAllParts(SIZE+1,Sudoku::partitions);
+    
+    return 0;
+    
 }

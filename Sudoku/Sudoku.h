@@ -21,7 +21,7 @@
 // Avoid using #define as much as possible. "const int" works just as well, and tells the compiler
 // that BASE is actually an int (and not just an arbitrary  string of letters), which may lead to 
 // more readable error messages and error detection.
-const int BASE = 2;
+const int BASE = 4;
 
 //#define SIZE BASE*BASE
 const int SIZE = BASE*BASE;
@@ -64,7 +64,7 @@ class Sudoku{
 	
 public:
     
-    static const Partitions P; 
+    static std::vector<int*>** partitions;
 	
 	// Constructor from a file
 //	Sudoku(string filePath);
@@ -163,8 +163,17 @@ public:
 	// return TRUE if successful, FALSE otherwise
 	bool solve(bool applySol=true);
     
+    void checkAllPartRow();
     void checkAllPartRow(int row);
-    void checkPartRow(const int* part, int partSize, int row, const vector<int>& rowUnknowns);
+    void checkPartRow(const int* part, int partSize, int row, const vector<int>& unknownCols);
+    
+    void checkAllPartCol();
+    void checkAllPartCol(int col);
+    void checkPartCol(const int* part, int partSize, int col, const vector<int>& unknownRows);
+    
+    void checkAllPartBlock();
+    void checkAllPartBlock(int baseRow, int baseCol);
+    void checkPartBlock(const int* part, int partSize, int baseRow, int baseCol, const vector<int>& unknownBoxes);
 	
 	////////////////////////////////////////
 	// DEBUG FUNCTIONS:
