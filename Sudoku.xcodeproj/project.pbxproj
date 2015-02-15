@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		DED294641A8ED8B8004DC767 /* Partitions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DED294621A8ED8B8004DC767 /* Partitions.cpp */; };
 		F9DAB2831A847012008A4E0F /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F9DAB2821A847012008A4E0F /* main.cpp */; };
 		F9DAB2901A848243008A4E0F /* Sudoku.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F9DAB28B1A848243008A4E0F /* Sudoku.cpp */; };
 		F9DAB2911A848243008A4E0F /* TreeSearch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F9DAB28D1A848243008A4E0F /* TreeSearch.cpp */; };
@@ -25,6 +26,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		DED294621A8ED8B8004DC767 /* Partitions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Partitions.cpp; sourceTree = "<group>"; };
+		DED294631A8ED8B8004DC767 /* Partitions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Partitions.h; sourceTree = "<group>"; };
 		F9DAB27F1A847012008A4E0F /* Sudoku */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Sudoku; sourceTree = BUILT_PRODUCTS_DIR; };
 		F9DAB2821A847012008A4E0F /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		F9DAB28A1A848243008A4E0F /* StructsAndEnums.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructsAndEnums.h; sourceTree = "<group>"; };
@@ -68,6 +71,8 @@
 				F9DAB28A1A848243008A4E0F /* StructsAndEnums.h */,
 				F9DAB28B1A848243008A4E0F /* Sudoku.cpp */,
 				F9DAB28C1A848243008A4E0F /* Sudoku.h */,
+				DED294621A8ED8B8004DC767 /* Partitions.cpp */,
+				DED294631A8ED8B8004DC767 /* Partitions.h */,
 				F9DAB28D1A848243008A4E0F /* TreeSearch.cpp */,
 				F9DAB28E1A848243008A4E0F /* TreeSearch.h */,
 			);
@@ -130,6 +135,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DED294641A8ED8B8004DC767 /* Partitions.cpp in Sources */,
 				F9DAB2911A848243008A4E0F /* TreeSearch.cpp in Sources */,
 				F9DAB2901A848243008A4E0F /* Sudoku.cpp in Sources */,
 				F9DAB2831A847012008A4E0F /* main.cpp in Sources */,
@@ -246,6 +252,7 @@
 				F9DAB2881A847012008A4E0F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

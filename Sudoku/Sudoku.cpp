@@ -8,6 +8,7 @@
 
 #include "Sudoku.h"
 #include "TreeSearch.h"
+#include "Partitions.h"
 
 #include <fstream>
 #include <iostream>
@@ -21,7 +22,7 @@
 
 using namespace std;
 
-
+const Partitions Sudoku::P = Partitions(SIZE);
 
 // Constructor from a file
 Sudoku::Sudoku(const string & filePath){
@@ -435,6 +436,39 @@ void Sudoku::removeCand(int row, int col, int value) {
 bool Sudoku::solve(bool applySol){
 	TreeSearch Search;
 	return Search.findSol(this, applySol);
+}
+
+
+void Sudoku::checkAllPartRow(int row) {
+    
+    // first find unknowns
+    vector<int> unknownCols;
+    for (int col=0; col<SIZE; col++) {
+        if (solution[row][col] == -1)
+            unknownCols.push_back(col);
+    }
+    int nUnknownCols = unknownCols.size();
+    
+    
+}
+
+void Sudoku::checkPartRow(const int* part, int partSize, int row, const vector<int>& unknownCols){
+    int nPartCand = 0;
+    bool partCand[SIZE] = {};
+    for (int i=0; i<partSize || nPartCand>partSize; i++) {
+        for (int value=0; value<SIZE || nPartCand>partSize; value++) {
+            if (candidate[row][unknownCols[i]][value] && !partCand[value]) {
+                partCand[value] = true;
+                nPartCand++;
+            }
+        }
+    }
+    if (nPartCand<=partSize) {
+        cout << "found partition at row " << row << endl;
+        displayCand();
+        exit(23);
+    }
+    
 }
 
 

@@ -10,6 +10,7 @@
 #define __Sudoku_Project__Sudoku__
 
 #include "StructsAndEnums.h"
+#include "Partitions.h"
 
 //#include <stdio.h>
 #include <string>
@@ -20,7 +21,7 @@
 // Avoid using #define as much as possible. "const int" works just as well, and tells the compiler
 // that BASE is actually an int (and not just an arbitrary  string of letters), which may lead to 
 // more readable error messages and error detection.
-const int BASE = 3;
+const int BASE = 2;
 
 //#define SIZE BASE*BASE
 const int SIZE = BASE*BASE;
@@ -56,10 +57,14 @@ class Sudoku{
 	bool blockVal[BASE][BASE][SIZE] = {};
 	// rowCand[row][k] gives wether the row 'row' already has the value 'k' determined
 	// similar definition for colCand and blockCand
+    
+    
 	
 	
 	
 public:
+    
+    static const Partitions P; 
 	
 	// Constructor from a file
 //	Sudoku(string filePath);
@@ -157,7 +162,9 @@ public:
 	// Solve the problem and applies the solution (optional)
 	// return TRUE if successful, FALSE otherwise
 	bool solve(bool applySol=true);
-	
+    
+    void checkAllPartRow(int row);
+    void checkPartRow(const int* part, int partSize, int row, const vector<int>& rowUnknowns);
 	
 	////////////////////////////////////////
 	// DEBUG FUNCTIONS:

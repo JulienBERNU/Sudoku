@@ -7,6 +7,7 @@
 //
 
 #include "Sudoku.h"
+#include "Partitions.h"
 
 #include <fstream>
 #include <iostream>
@@ -41,7 +42,7 @@ int main(){
 	
 	srand(unsigned(time(0)));
 	
-	for (int i=0; i<10;i++) {
+	for (int i=0; i<1;i++) {
 		
 		iStart = clock();
 		Sudoku problem;	// generates a random problem
@@ -69,7 +70,14 @@ int main(){
 	
 	duration = ( clock() - start ) / (double) CLOCKS_PER_SEC;
 	cout << "total duration: " << duration << '\n';
-	
+    
+//    int ensemble[] = {1,42,3,24};
+//    void (*actionToPerform)(const int*, int) = Partitions::printPart;
+//    Partitions::scanAllParts(4, actionToPerform);
+//    actionToPerform(part,4);
+    
+    Sudoku::P.printAllParts();
+    
 	return 0;
 	
 }
