@@ -26,7 +26,7 @@ namespace Partitions {
     
     void fillAllParts(int range, std::vector<int*>* partitions);
     
-    int* complementPart(const int* part, int partSize, int range);
+    void getComplementPart(const int* part, int partSize, int range, int* complement);
     
     
     

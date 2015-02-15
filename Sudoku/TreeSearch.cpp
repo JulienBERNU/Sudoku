@@ -120,14 +120,24 @@ vector<Guess> TreeSearch::generateHints(Sudoku* problem){
     Sudoku* current = new Sudoku(*problem);
     bool finished = false;
     while (!finished) {
+//        cout << "in while\n";
         checkResult check = current->checkObvious(); // do all obvious checks until no more progress or error...
         switch (check){
             case FOUND_NOTHING:
-//                cout << "check part row \n";
-                current->checkAllPartRow();
-                current->checkAllPartCol();
-                current->checkAllPartBlock();
                 // no more obvious move
+//                bool checkPart = false;
+//                checkPart |= current->checkAllPartRow();
+//                checkPart |= current->checkAllPartCol();
+//                checkPart |= current->checkAllPartBlock();
+//                if (checkPart) {
+//                    cout << "found part\n";
+//                    break;
+//                }
+//                if (current->checkAllPart()) {
+////                    cout << "found part\n";
+//                    break;
+//                }
+//                cout << "found no part\n";
                 Coord c;
                 if (current->getRandomUnknown(c)) {							// Seach randomly to generate random problems
                     // there's still some undetermined box >> make a new guess

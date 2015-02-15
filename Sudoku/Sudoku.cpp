@@ -458,16 +458,26 @@ bool Sudoku::solve(bool applySol){
 
 
 
-
-
-
-void Sudoku::checkAllPartRow() {
-    for (int row=0; row<SIZE; row++) {
-        checkAllPartRow(row);
-    }
+bool Sudoku::checkAllPart() {
+    bool result = false;
+    result |= checkAllPartRow();
+    result |= checkAllPartCol();
+    result |= checkAllPartBlock();
+    return result;
 }
 
-void Sudoku::checkAllPartRow(int row) {
+
+bool Sudoku::checkAllPartRow() {
+    bool result = false;
+    for (int row=0; row<SIZE; row++) {
+        result |= checkAllPartRow(row);
+    }
+    return result;
+}
+
+bool Sudoku::checkAllPartRow(int row) {
+    
+    bool result = false;
     
 //    cout << "check row " << row << endl;
     
@@ -482,13 +492,13 @@ void Sudoku::checkAllPartRow(int row) {
 //        cout << "check partSize " << partSize << endl;
         for (int i=0; i<partitions[nUnknownCols][partSize].size(); i++) {
 //            cout << "check part number " << i << endl;
-            checkPartRow(partitions[nUnknownCols][partSize][i], partSize, row, unknownCols);
+            result |= checkPartRow(partitions[nUnknownCols][partSize][i], partSize, row, unknownCols);
         }
     }
-    
+    return result;
 }
 
-void Sudoku::checkPartRow(const int* part, int partSize, int row, const vector<int>& unknownCols){
+bool Sudoku::checkPartRow(const int* part, int partSize, int row, const vector<int>& unknownCols){
     int nPartCand = 0;
     bool partCand[SIZE] = {};
     for (int i=0; i<partSize && nPartCand<=partSize; i++) {
@@ -499,6 +509,8 @@ void Sudoku::checkPartRow(const int* part, int partSize, int row, const vector<i
             }
         }
     }
+    
+    bool result = false;
     if (nPartCand<=partSize) {
 //        cout << "found partition at row " << row << endl;
 //        cout << "unknown cols:\n";
@@ -522,10 +534,12 @@ void Sudoku::checkPartRow(const int* part, int partSize, int row, const vector<i
 //        }
 //        cout << endl;
 //        displayCand();
-        int* complement = Partitions::complementPart(part, partSize, unknownCols.size());
+        int* complement = new int[unknownCols.size()-partSize];
+        Partitions::getComplementPart(part, partSize, unknownCols.size(), complement);
         for (int i=0; i<unknownCols.size()-partSize; i++) {
             for (int value=0; value<SIZE; value++) {
                 if (partCand[value] && candidate[row][unknownCols[complement[i]]][value]) {
+                    result = true;
                     removeCand(row, unknownCols[complement[i]], value);
                 }
             }
@@ -534,18 +548,22 @@ void Sudoku::checkPartRow(const int* part, int partSize, int row, const vector<i
 //        displayCand();
 //        exit(23);
     }
-    
+    return result;
 }
 
 
 
-void Sudoku::checkAllPartCol() {
+bool Sudoku::checkAllPartCol() {
+    bool result = false;
     for (int col=0; col<SIZE; col++) {
-        checkAllPartCol(col);
+        result |= checkAllPartCol(col);
     }
+    return false;
 }
 
-void Sudoku::checkAllPartCol(int col) {
+bool Sudoku::checkAllPartCol(int col) {
+    
+    bool result = false;
     
     //    cout << "check row " << row << endl;
     
@@ -560,13 +578,13 @@ void Sudoku::checkAllPartCol(int col) {
         //        cout << "check partSize " << partSize << endl;
         for (int i=0; i<partitions[nUnknownRows][partSize].size(); i++) {
             //            cout << "check part number " << i << endl;
-            checkPartCol(partitions[nUnknownRows][partSize][i], partSize, col, unknownRows);
+            result |= checkPartCol(partitions[nUnknownRows][partSize][i], partSize, col, unknownRows);
         }
     }
-    
+    return result;
 }
 
-void Sudoku::checkPartCol(const int* part, int partSize, int col, const vector<int>& unknownRows){
+bool Sudoku::checkPartCol(const int* part, int partSize, int col, const vector<int>& unknownRows){
     int nPartCand = 0;
     bool partCand[SIZE] = {};
     for (int i=0; i<partSize && nPartCand<=partSize; i++) {
@@ -577,6 +595,7 @@ void Sudoku::checkPartCol(const int* part, int partSize, int col, const vector<i
             }
         }
     }
+    bool result = false;
     if (nPartCand<=partSize) {
 //        cout << "found partition at col " << col << endl;
 //        cout << "unknown rows:\n";
@@ -599,12 +618,14 @@ void Sudoku::checkPartCol(const int* part, int partSize, int col, const vector<i
 //            if (partCand[i]) cout << i << ' ';
 //        }
 //        cout << endl;
-//        displayCand();
-        int* complement = Partitions::complementPart(part, partSize, unknownRows.size());
+        //        displayCand();
+        int* complement = new int[unknownRows.size()-partSize];
+        Partitions::getComplementPart(part, partSize, unknownRows.size(), complement);
         for (int i=0; i<unknownRows.size()-partSize; i++) {
             for (int value=0; value<SIZE; value++) {
                 if (partCand[value] && candidate[unknownRows[complement[i]]][col][value]) {
                     removeCand(unknownRows[complement[i]], col, value);
+                    result = true;
                 }
             }
         }
@@ -612,20 +633,24 @@ void Sudoku::checkPartCol(const int* part, int partSize, int col, const vector<i
 //        displayCand();
 //        exit(23);
     }
-    
+    return result;
 }
 
 
 
-void Sudoku::checkAllPartBlock() {
+bool Sudoku::checkAllPartBlock() {
+    bool result = false;
     for (int baseRow=0; baseRow<BASE; baseRow++) {
         for (int baseCol=0; baseCol<BASE; baseCol++) {
-            checkAllPartBlock(baseRow,baseCol);
+            result |= checkAllPartBlock(baseRow,baseCol);
         }
     }
+    return result;
 }
 
-void Sudoku::checkAllPartBlock(int baseRow, int baseCol) {
+bool Sudoku::checkAllPartBlock(int baseRow, int baseCol) {
+    
+    bool result = false;
     
     //    cout << "check row " << row << endl;
     
@@ -641,13 +666,13 @@ void Sudoku::checkAllPartBlock(int baseRow, int baseCol) {
         //        cout << "check partSize " << partSize << endl;
         for (int i=0; i<partitions[nUnknownBoxes][partSize].size(); i++) {
             //            cout << "check part number " << i << endl;
-            checkPartBlock(partitions[nUnknownBoxes][partSize][i], partSize, baseRow, baseCol, unknownBoxes);
+            result |= checkPartBlock(partitions[nUnknownBoxes][partSize][i], partSize, baseRow, baseCol, unknownBoxes);
         }
     }
-    
+    return result;
 }
 
-void Sudoku::checkPartBlock(const int* part, int partSize, int baseRow, int baseCol, const vector<int>& unknownBoxes){
+bool Sudoku::checkPartBlock(const int* part, int partSize, int baseRow, int baseCol, const vector<int>& unknownBoxes){
     int nPartCand = 0;
     bool partCand[SIZE] = {};
     Coord* box = block[baseRow][baseCol];
@@ -659,6 +684,7 @@ void Sudoku::checkPartBlock(const int* part, int partSize, int baseRow, int base
             }
         }
     }
+    bool result = false;
     if (nPartCand<=partSize) {
 //        cout << "found partition at block " << baseRow << baseCol << endl;
 //        cout << "unknown boxes:\n";
@@ -681,12 +707,14 @@ void Sudoku::checkPartBlock(const int* part, int partSize, int baseRow, int base
 //            if (partCand[i]) cout << i << ' ';
 //        }
 //        cout << endl;
-//        displayCand();
-        int* complement = Partitions::complementPart(part, partSize, unknownBoxes.size());
+        //        displayCand();
+        int* complement = new int[unknownBoxes.size()-partSize];
+        Partitions::getComplementPart(part, partSize, unknownBoxes.size(), complement);
         for (int i=0; i<unknownBoxes.size()-partSize; i++) {
             for (int value=0; value<SIZE; value++) {
                 if (partCand[value] && candidate[box[unknownBoxes[complement[i]]].row][box[unknownBoxes[complement[i]]].col][value]) {
                     removeCand(box[unknownBoxes[complement[i]]].row, box[unknownBoxes[complement[i]]].col, value);
+                    result = true;
                 }
             }
         }
@@ -694,7 +722,7 @@ void Sudoku::checkPartBlock(const int* part, int partSize, int baseRow, int base
 //        displayCand();
 //        exit(23);
     }
-    
+    return result;
 }
 
 

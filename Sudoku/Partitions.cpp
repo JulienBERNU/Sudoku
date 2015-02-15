@@ -91,8 +91,7 @@ void Partitions::fillAllParts(int range, std::vector<int*>* rangedPartitions) {
     }
 }
 
-int* Partitions::complementPart(const int* part, int partSize, int range) {
-    int* complement = new int[range-partSize];
+void Partitions::getComplementPart(const int* part, int partSize, int range, int* complement) {
     int i = 0;
     int k = 0;
     for (int j=0; j<range; j++) {
@@ -103,7 +102,6 @@ int* Partitions::complementPart(const int* part, int partSize, int range) {
         complement[k] = j;
         k++;
     }
-    return complement;
 }
 
 //Partitions::Partitions(int size) {
