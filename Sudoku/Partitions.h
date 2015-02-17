@@ -15,9 +15,6 @@
 
 namespace Partitions {
     
-//    int size;
-//    std::vector<int*>* partitions;
-    
     void fill(int* part, int partSize, std::vector<int*>* partitions);
     
     void completeAndFillPart(int* part, int currentSize, int partSize, int range, std::vector<int*>* partitions);
@@ -30,16 +27,14 @@ namespace Partitions {
     
     
     
-    void printPart(const int* part, int partSize);
+//    void printPart(const int* part, int partSize);
+//    
+//    void printSizedParts(int partSize, std::vector<int*>& sizedPartitions);
+//    
+//    void printRangedParts(int range, std::vector<int*>* partitions);
+//    
+//    void printAllParts(int SIZE, std::vector<int*>** partitions);
     
-    void printSizedParts(int partSize, std::vector<int*>& sizedPartitions);
-    
-    void printRangedParts(int range, std::vector<int*>* partitions);
-    
-    void printAllParts(int SIZE, std::vector<int*>** partitions);
-    
-    
-//    Partitions(int size);
     
     
 };

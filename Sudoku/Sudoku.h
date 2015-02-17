@@ -12,22 +12,13 @@
 #include "StructsAndEnums.h"
 #include "Partitions.h"
 
-//#include <stdio.h>
 #include <string>
 #include <vector>
 
 
-//#define BASE 3
-// Avoid using #define as much as possible. "const int" works just as well, and tells the compiler
-// that BASE is actually an int (and not just an arbitrary  string of letters), which may lead to
-// more readable error messages and error detection.
 const int BASE = 3;
-
-//#define SIZE BASE*BASE
 const int SIZE = BASE*BASE;
-
-
-// Sudoku.readFile(), Sudoku.displaySol() and Sudoku.displayCand()
+// Sudoku.readFile()
 // all assumes BASE=3 and SIZE=9 !!! Needs modification if BASE>3...
 
 using namespace std;
@@ -52,34 +43,36 @@ class Sudoku{
     Coord block[BASE][BASE][SIZE];
     // block[baseRow][baseCol] gives the list of boxes in the block [baseRow][baseCol]
     
-    bool rowVal[SIZE][SIZE] = {};
-    bool colVal[SIZE][SIZE] = {};
-    bool blockVal[BASE][BASE][SIZE] = {};
-    // rowCand[row][k] gives wether the row 'row' already has the value 'k' determined
-    // similar definition for colCand and blockCand
-    
-    
+    bool needCheckBox[SIZE][SIZE] = {};
+    bool needCheckRow[SIZE][SIZE] = {};
+    bool needCheckCol[SIZE][SIZE] = {};
+    bool needCheckBlock[BASE][BASE][SIZE] = {};
+    bool needCheckPartRow[SIZE];
+    bool needCheckPartCol[SIZE];
+    bool needCheckPartBlock[BASE][BASE];
+    // contains information for solving
+    // for example if needCheckBox[row][col] = false,
+    // the solving routine will skip checking box [row][col]
+    // (because we identified this check as useless)
     
     
     
 public:
     
+
     static std::vector<int*>** partitions;
+    // A big array/vector containing all possible partitions.
+    // partitions[range][partSize] is a vector conatining
+    // all partitions of size partSize in the range {0...(range-1)}
+    // (each partition is an int[])
+    // for eaxample partition[4][2] = (vector) :
+    // {{0,1}, {0,2}, {0,3}, {1,2}, {1,3}, {2,3}}
     
     // Constructor from a file
-    //	Sudoku(string filePath);
-    
-    // Change 1: For clarity (and sometimes to help the compiler optimize) make function parameters
-    //           that you are not changing in your function 'const'
-    // Change 2: When passing a const function parameter that may be large, it's usually faster
-    //           to pass a reference to it rather than making a copy. For std::strings, this may
-    //           be unnecessary with modern c++ compilers, but it doesn't hurt.
     Sudoku(const string& filePath);
     
     
     // Constructor from list of hints
-    // Change: passing as a const reference instead of sending a copy. If vector<Guess> is large,
-    //         this is certainly going to be more efficient.
     Sudoku(const vector<Guess>& hints);
     
     // Random Constructor
@@ -101,10 +94,6 @@ public:
     
     
     // display the solution
-    //	const void displaySol();
-    // Your declaration says that the function returns a "void" which is "const", which isn't useful atall.
-    // Now, with "const" at the end of the declaration, it says that displaySol() is a const member function,
-    // and will not modify the Sudoku object.
     void displaySol() const;
     
     
@@ -139,8 +128,6 @@ public:
     
     // find the first undetermined box
     // return true if there is one, false otherwise (meaning the grid is solved)
-    //const bool getFirstUnknown(Coord &c);
-    // Same error as above, your const refer to the bool instead of the member function.
     bool getFirstUnknown(Coord &c) const;
     
     // find a random undetermined box
@@ -163,16 +150,24 @@ public:
     // return TRUE if successful, FALSE otherwise
     bool solve(bool applySol=true);
     
+    // check all partitions
     bool checkAllPart();
+    // in a row (or column, or block) if we can find amongst the undetermined boxes
+    // a partition (i.e. a subset) which collectively contains no more that sizePart candidate
+    // then we know those candidates must be in that partition, and thus can be removed from
+    // the complementary partition
     
-    bool checkAllPartRow();
-    bool checkAllPartRow(int row);
-    bool checkPartRow(const int* part, int partSize, int row, const vector<int>& unknownCols);
+    // check partitions in rows
+    bool checkAllPartRow();         // for all rows
+    bool checkAllPartRow(int row);  // for a given row
+    bool checkPartRow(const int* part, int partSize, int row, const vector<int>& unknownCols);  // for a given partition
     
+    // in columns
     bool checkAllPartCol();
     bool checkAllPartCol(int col);
     bool checkPartCol(const int* part, int partSize, int col, const vector<int>& unknownRows);
     
+    // in blocks
     bool checkAllPartBlock();
     bool checkAllPartBlock(int baseRow, int baseCol);
     bool checkPartBlock(const int* part, int partSize, int baseRow, int baseCol, const vector<int>& unknownBoxes);

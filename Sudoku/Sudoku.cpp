@@ -20,27 +20,17 @@
 #include <cstdlib>
 #include <vector>
 
-using namespace std;
 
 std::vector<int*>** initPartitions(){
-    
-//    cout << "init parts\n";
-    
     std::vector<int*>** partitions = new std::vector<int*>*[SIZE+1];
-    
     for (int range=0; range<=SIZE; range++) {
-//        cout << "range " << range << endl;
         partitions[range] = new std::vector<int*>[SIZE+1];
         Partitions::fillAllParts(range, partitions[range]);
     }
-    
     return partitions;
-    
 }
 
 std::vector<int*>** Sudoku::partitions = initPartitions();
-
-
 
 // Constructor from a file
 Sudoku::Sudoku(const string & filePath){
@@ -135,25 +125,53 @@ void Sudoku::update(int row, int col, int value){
 		// 'value' is no longer a possible candidate for the other boxes
 		// in the same row, column or block as [row][col]
 		Coord* b = block[row/BASE][col/BASE];
-		for (int i=0; i<SIZE; i++) {
-			candidate[row][i][value] = false;						// same row
-			candidate[i][col][value] = false;						// same column
-			candidate[b[i].row][b[i].col][value] = false;	// same block
-		}
-		// the other candidates for this box are also no longer possible
-		// Updating this should not be necessary, but nicer for display...
-		for (int i=0; i<SIZE; i++) {
-			candidate[row][col][i] = (i==value);
-		}
-		
-		// update the solution itself
-		solution[row][col] = value;
-		rowVal[row][value] = true;
-		colVal[col][value] = true;
-		blockVal[row/BASE][col/BASE][value] = true;
-		
-		nUnknown--;
-		
+        for (int i=0; i<SIZE; i++) {
+            // same row
+            if (i!=col && candidate[row][i][value]) {
+                candidate[row][i][value] = false;
+                needCheckBox[row][i] = true;
+                needCheckCol[i][value] = true;
+                needCheckBlock[row/BASE][i/BASE][value] = true;
+                needCheckPartCol[i] = true;
+                needCheckPartBlock[row/BASE][i/BASE] = true;
+            }
+            // same column
+            if (i!=row && candidate[i][col][value]) {
+                candidate[i][col][value] = false;
+                needCheckBox[i][col] = true;
+                needCheckRow[i][value] = true;
+                needCheckBlock[i/BASE][col/BASE][value] = true;
+                needCheckPartRow[i] = true;
+                needCheckPartBlock[i/BASE][col/BASE] = true;
+            }
+            // same block
+            if ((b[i].row!=row || b[i].col!=col) && candidate[b[i].row][b[i].col][value]) {
+                candidate[b[i].row][b[i].col][value] = false;
+                needCheckBox[b[i].row][b[i].col] = true;
+                needCheckRow[b[i].row][value] = true;
+                needCheckCol[b[i].col][value] = true;
+                needCheckPartRow[b[i].row] = true;
+                needCheckPartCol[b[i].col] = true;
+            }
+            
+            // the other candidates for this box are also no longer possible
+            // Updating this should not be necessary, but nicer for display...
+            if (i!=value && candidate[row][col][i]) {
+                candidate[row][col][i] = false;
+                needCheckRow[row][i] = true;
+                needCheckCol[col][i] = true;
+                needCheckBlock[row/BASE][col/BASE][value] = true;
+                needCheckPartRow[row] = true;
+                needCheckPartCol[col] = true;
+                needCheckPartBlock[row/BASE][col/BASE] = true;
+            }
+        }
+        
+        // update the solution itself
+        solution[row][col] = value;
+        
+        nUnknown--;
+        
 	}
 	
 }
@@ -309,45 +327,51 @@ checkResult Sudoku::checkObvious(){
 	
 	checkResult result = FOUND_NOTHING;
 	
-	// check all boxes
+	// boxes
 	for (int row=0; row<SIZE; row++) {
 		for (int col=0; col<SIZE; col++) {
-			if (solution[row][col] == -1) {
-				switch (checkBoxObvious(row,col)) {
-					case FOUND_ERROR:
-						return FOUND_ERROR;
-					case FOUND_SOMETHING:
-						result = FOUND_SOMETHING;
-				}
-			}
+            if (needCheckBox[row][col]) {
+                needCheckBox[row][col] = false;
+                switch (checkBoxObvious(row,col)) {
+                    case FOUND_ERROR:
+                        return FOUND_ERROR;
+                    case FOUND_SOMETHING:
+                        result = FOUND_SOMETHING;
+                    default:;
+                }
+            }
 		}
 	}
 	
-	// check all rows
+	// rows
 	for (int row=0; row<SIZE; row++) {
 		for (int value=0; value<SIZE; value++){
-			if (!rowVal[row][value]) {
-				switch (checkRowObvious(row,value)) {
-					case FOUND_ERROR:
-						return FOUND_ERROR;
-					case FOUND_SOMETHING:
-						result = FOUND_SOMETHING;
-				}
-			}
+            if (needCheckRow[row][value]) {
+                needCheckRow[row][value] = false;
+                switch (checkRowObvious(row,value)) {
+                    case FOUND_ERROR:
+                        return FOUND_ERROR;
+                    case FOUND_SOMETHING:
+                        result = FOUND_SOMETHING;
+                    default:;
+                }
+            }
 		}
 	}
 	
-	// check all columns
+	// columns
 	for (int col=0; col<SIZE; col++) {
 		for (int value=0; value<SIZE; value++){
-			if (!colVal[col][value]) {
-				switch (checkColObvious(col,value)) {
-					case FOUND_ERROR:
-						return FOUND_ERROR;
-					case FOUND_SOMETHING:
-						result = FOUND_SOMETHING;
-				}
-			}
+            if (needCheckCol[col][value]) {
+                needCheckCol[col][value] = false;
+                switch (checkColObvious(col,value)) {
+                    case FOUND_ERROR:
+                        return FOUND_ERROR;
+                    case FOUND_SOMETHING:
+                        result = FOUND_SOMETHING;
+                    default:;
+                }
+            }
 		}
 	}
 	
@@ -355,14 +379,16 @@ checkResult Sudoku::checkObvious(){
 	for (int baseRow=0; baseRow<BASE; baseRow++) {
 		for (int baseCol=0; baseCol<BASE; baseCol++) {
 			for (int value=0; value<SIZE; value++){
-				if (!blockVal[baseRow][baseCol][value]) {
-					switch (checkBlockObvious(baseRow,baseCol,value)) {
-						case FOUND_ERROR:
-							return FOUND_ERROR;
-						case FOUND_SOMETHING:
-							result = FOUND_SOMETHING;
-					}
-				}
+                if (needCheckBlock[baseRow][baseCol][value]) {
+                    needCheckBlock[baseRow][baseCol][value] = false;
+                    switch (checkBlockObvious(baseRow,baseCol,value)) {
+                        case FOUND_ERROR:
+                            return FOUND_ERROR;
+                        case FOUND_SOMETHING:
+                            result = FOUND_SOMETHING;
+                        default:;
+                    }
+                }
 			}
 		}
 	}
@@ -406,9 +432,8 @@ bool Sudoku::getRandomUnknown(Coord &c) const{
 			}
 		}
 	}
-	cerr << "Should not print that!" << endl;
+    assert(false);  // should never reach that
 	return false;
-	
 }
 
 
@@ -446,6 +471,13 @@ int Sudoku::getRandomCand(int row, int col) const{
 // remove candidate 'value' from box [row][col]
 void Sudoku::removeCand(int row, int col, int value) {
 	candidate[row][col][value] = false;
+    needCheckBox[row][col] = true;
+    needCheckRow[row][value] = true;
+    needCheckCol[col][value] = true;
+    needCheckBlock[row/BASE][col/BASE][value] = true;
+    needCheckPartRow[row] = true;
+    needCheckPartCol[col] = true;
+    needCheckPartBlock[row/BASE][col/BASE] = true;
 }
 
 
@@ -457,7 +489,8 @@ bool Sudoku::solve(bool applySol){
 }
 
 
-
+// check all partitions
+// return true if something new was found
 bool Sudoku::checkAllPart() {
     bool result = false;
     result |= checkAllPartRow();
@@ -466,76 +499,62 @@ bool Sudoku::checkAllPart() {
     return result;
 }
 
-
+// check all partitions in rows
+// return true if something new was found
 bool Sudoku::checkAllPartRow() {
     bool result = false;
     for (int row=0; row<SIZE; row++) {
-        result |= checkAllPartRow(row);
+        if (needCheckPartRow[row]) {
+            needCheckPartRow[row] = false;
+            result |= checkAllPartRow(row);
+        }
     }
     return result;
 }
 
+// check all partitions in a given row
+// return true if something new was found
 bool Sudoku::checkAllPartRow(int row) {
-    
     bool result = false;
-    
-//    cout << "check row " << row << endl;
-    
     // first find unknowns
     vector<int> unknownCols;
     for (int col=0; col<SIZE; col++) {
         if (solution[row][col] == -1)
             unknownCols.push_back(col);
     }
-    int nUnknownCols = unknownCols.size();
+    // check all non trivial partitions
+    int nUnknownCols = int(unknownCols.size());
     for (int partSize=2; partSize<nUnknownCols; partSize++) {
-//        cout << "check partSize " << partSize << endl;
         for (int i=0; i<partitions[nUnknownCols][partSize].size(); i++) {
-//            cout << "check part number " << i << endl;
             result |= checkPartRow(partitions[nUnknownCols][partSize][i], partSize, row, unknownCols);
         }
     }
     return result;
 }
 
+// check a given partition in a given row
+// return true if something new was found
 bool Sudoku::checkPartRow(const int* part, int partSize, int row, const vector<int>& unknownCols){
+    // count the number of candidates in part
     int nPartCand = 0;
     bool partCand[SIZE] = {};
+    // partCand[value] tells wether value is a candidate in part
     for (int i=0; i<partSize && nPartCand<=partSize; i++) {
         for (int value=0; value<SIZE && nPartCand<=partSize; value++) {
+            // as soon as nPartCand > partSize we can stop since the following
+            // is condition upon nPartCand <= partSize
             if (candidate[row][unknownCols[part[i]]][value] && !partCand[value]) {
                 partCand[value] = true;
                 nPartCand++;
             }
         }
     }
-    
     bool result = false;
     if (nPartCand<=partSize) {
-//        cout << "found partition at row " << row << endl;
-//        cout << "unknown cols:\n";
-//        for (int i=0; i<unknownCols.size(); i++) {
-//            cout << unknownCols[i] << ' ';
-//        }
-//        cout << endl;
-//        cout << "partSize: " << partSize << endl;
-//        cout << "partition:\n";
-//        for (int i=0; i<partSize; i++) {
-//            cout << part[i] << ' ';
-//        }
-//        cout << endl;
-//        cout << "columns: ";
-//        for (int i=0; i<partSize; i++) {
-//            cout << unknownCols[part[i]] << ' ';
-//        }
-//        cout << "\nhave candidates: ";
-//        for (int i=0; i<SIZE; i++) {
-//            if (partCand[i]) cout << i << ' ';
-//        }
-//        cout << endl;
-//        displayCand();
-        int* complement = new int[unknownCols.size()-partSize];
-        Partitions::getComplementPart(part, partSize, unknownCols.size(), complement);
+        // we found a conclusive partition
+        // its candidates can be removed from its complementary partition
+        int complement[unknownCols.size()-partSize];
+        Partitions::getComplementPart(part, partSize, int(unknownCols.size()), complement);
         for (int i=0; i<unknownCols.size()-partSize; i++) {
             for (int value=0; value<SIZE; value++) {
                 if (partCand[value] && candidate[row][unknownCols[complement[i]]][value]) {
@@ -544,46 +563,45 @@ bool Sudoku::checkPartRow(const int* part, int partSize, int row, const vector<i
                 }
             }
         }
-        delete[] complement;
-//        displayCand();
-//        exit(23);
     }
     return result;
 }
 
 
-
+// similar process as rows
+// see comments for rows
 bool Sudoku::checkAllPartCol() {
     bool result = false;
     for (int col=0; col<SIZE; col++) {
-        result |= checkAllPartCol(col);
+        if (needCheckPartCol[col]) {
+            needCheckPartCol[col] = false;
+            result |= checkAllPartCol(col);
+        }
     }
     return false;
 }
 
+// similar process as rows
+// see comments for rows
 bool Sudoku::checkAllPartCol(int col) {
-    
     bool result = false;
-    
-    //    cout << "check row " << row << endl;
-    
     // first find unknowns
     vector<int> unknownRows;
     for (int row=0; row<SIZE; row++) {
         if (solution[row][col] == -1)
             unknownRows.push_back(row);
     }
-    int nUnknownRows = unknownRows.size();
+    int nUnknownRows = int(unknownRows.size());
     for (int partSize=2; partSize<nUnknownRows; partSize++) {
-        //        cout << "check partSize " << partSize << endl;
         for (int i=0; i<partitions[nUnknownRows][partSize].size(); i++) {
-            //            cout << "check part number " << i << endl;
             result |= checkPartCol(partitions[nUnknownRows][partSize][i], partSize, col, unknownRows);
         }
     }
     return result;
 }
 
+// similar process as rows
+// see comments for rows
 bool Sudoku::checkPartCol(const int* part, int partSize, int col, const vector<int>& unknownRows){
     int nPartCand = 0;
     bool partCand[SIZE] = {};
@@ -597,30 +615,8 @@ bool Sudoku::checkPartCol(const int* part, int partSize, int col, const vector<i
     }
     bool result = false;
     if (nPartCand<=partSize) {
-//        cout << "found partition at col " << col << endl;
-//        cout << "unknown rows:\n";
-//        for (int i=0; i<unknownRows.size(); i++) {
-//            cout << unknownRows[i] << ' ';
-//        }
-//        cout << endl;
-//        cout << "partSize: " << partSize << endl;
-//        cout << "partition:\n";
-//        for (int i=0; i<partSize; i++) {
-//            cout << part[i] << ' ';
-//        }
-//        cout << endl;
-//        cout << "rows: ";
-//        for (int i=0; i<partSize; i++) {
-//            cout << unknownRows[part[i]] << ' ';
-//        }
-//        cout << "\nhave candidates: ";
-//        for (int i=0; i<SIZE; i++) {
-//            if (partCand[i]) cout << i << ' ';
-//        }
-//        cout << endl;
-        //        displayCand();
-        int* complement = new int[unknownRows.size()-partSize];
-        Partitions::getComplementPart(part, partSize, unknownRows.size(), complement);
+        int complement[unknownRows.size()-partSize];
+        Partitions::getComplementPart(part, partSize, int(unknownRows.size()), complement);
         for (int i=0; i<unknownRows.size()-partSize; i++) {
             for (int value=0; value<SIZE; value++) {
                 if (partCand[value] && candidate[unknownRows[complement[i]]][col][value]) {
@@ -629,31 +625,29 @@ bool Sudoku::checkPartCol(const int* part, int partSize, int col, const vector<i
                 }
             }
         }
-        delete[] complement;
-//        displayCand();
-//        exit(23);
     }
     return result;
 }
 
-
-
+// similar process as rows
+// see comments for rows
 bool Sudoku::checkAllPartBlock() {
     bool result = false;
     for (int baseRow=0; baseRow<BASE; baseRow++) {
         for (int baseCol=0; baseCol<BASE; baseCol++) {
-            result |= checkAllPartBlock(baseRow,baseCol);
+            if (needCheckPartBlock[baseRow][baseCol]) {
+                needCheckPartBlock[baseRow][baseCol] = false;
+                result |= checkAllPartBlock(baseRow,baseCol);
+            }
         }
     }
     return result;
 }
 
+// similar process as rows
+// see comments for rows
 bool Sudoku::checkAllPartBlock(int baseRow, int baseCol) {
-    
     bool result = false;
-    
-    //    cout << "check row " << row << endl;
-    
     // first find unknowns
     vector<int> unknownBoxes;
     Coord* box = block[baseRow][baseCol];
@@ -661,17 +655,17 @@ bool Sudoku::checkAllPartBlock(int baseRow, int baseCol) {
         if (solution[box[i].row][box[i].col] == -1)
             unknownBoxes.push_back(i);
     }
-    int nUnknownBoxes = unknownBoxes.size();
+    int nUnknownBoxes = int(unknownBoxes.size());
     for (int partSize=2; partSize<nUnknownBoxes; partSize++) {
-        //        cout << "check partSize " << partSize << endl;
         for (int i=0; i<partitions[nUnknownBoxes][partSize].size(); i++) {
-            //            cout << "check part number " << i << endl;
             result |= checkPartBlock(partitions[nUnknownBoxes][partSize][i], partSize, baseRow, baseCol, unknownBoxes);
         }
     }
     return result;
 }
 
+// similar process as rows
+// see comments for rows
 bool Sudoku::checkPartBlock(const int* part, int partSize, int baseRow, int baseCol, const vector<int>& unknownBoxes){
     int nPartCand = 0;
     bool partCand[SIZE] = {};
@@ -686,30 +680,8 @@ bool Sudoku::checkPartBlock(const int* part, int partSize, int baseRow, int base
     }
     bool result = false;
     if (nPartCand<=partSize) {
-//        cout << "found partition at block " << baseRow << baseCol << endl;
-//        cout << "unknown boxes:\n";
-//        for (int i=0; i<unknownBoxes.size(); i++) {
-//            cout << unknownBoxes[i] << ' ';
-//        }
-//        cout << endl;
-//        cout << "partSize: " << partSize << endl;
-//        cout << "partition:\n";
-//        for (int i=0; i<partSize; i++) {
-//            cout << part[i] << ' ';
-//        }
-//        cout << endl;
-//        cout << "boxes: ";
-//        for (int i=0; i<partSize; i++) {
-//            cout << unknownBoxes[part[i]] << ' ';
-//        }
-//        cout << "\nhave candidates: ";
-//        for (int i=0; i<SIZE; i++) {
-//            if (partCand[i]) cout << i << ' ';
-//        }
-//        cout << endl;
-        //        displayCand();
-        int* complement = new int[unknownBoxes.size()-partSize];
-        Partitions::getComplementPart(part, partSize, unknownBoxes.size(), complement);
+        int complement[unknownBoxes.size()-partSize];
+        Partitions::getComplementPart(part, partSize, int(unknownBoxes.size()), complement);
         for (int i=0; i<unknownBoxes.size()-partSize; i++) {
             for (int value=0; value<SIZE; value++) {
                 if (partCand[value] && candidate[box[unknownBoxes[complement[i]]].row][box[unknownBoxes[complement[i]]].col][value]) {
@@ -718,9 +690,6 @@ bool Sudoku::checkPartBlock(const int* part, int partSize, int baseRow, int base
                 }
             }
         }
-        delete[] complement;
-//        displayCand();
-//        exit(23);
     }
     return result;
 }

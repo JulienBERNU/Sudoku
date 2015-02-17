@@ -23,8 +23,6 @@ using namespace std;
 void TreeSearch::newGuess(Coord c, int value, Sudoku* current){
 	Sudoku* copy = new Sudoku(*current);
 	Guess guess = {c,value};
-//	log[depth].push(guess);
-//	depth++;
 	allGuesses.push(guess);
 	allStatesBeforeGuesses.push(copy);
 }
@@ -32,12 +30,11 @@ void TreeSearch::newGuess(Coord c, int value, Sudoku* current){
 
 // Go one step back in the history (*current is updated accordingly)
 bool TreeSearch::backtrack(Sudoku* &current){
-	if (allGuesses.empty())
+    if (allGuesses.empty()) {
 		// no bactracking possible
 		return false;
+    }
 	// backtrack: we go back to before the last guess
-//	while (!log[depth].empty()) log[depth].pop();
-//	depth--;
 	delete current;
 	Guess lastGuess = allGuesses.top();
 	allGuesses.pop();
@@ -73,8 +70,11 @@ bool TreeSearch::findSol(Sudoku* problem, bool applySol){
 		switch (check) {
 			case FOUND_NOTHING:
 				// no more obvious move
+                if (current->checkAllPart()) {
+                    break;
+                }
 				Coord c;
-				if (current->getFirstUnknown(c)) {									// Search systematically: first unknown box
+				if (current->getFirstUnknown(c)) {						// Search systematically: first unknown box
 					// there's still some undetermined box >> make a new guess
 					int value = current->getFirstCand(c.row,c.col);		// Search systematically: first candidate
 					newGuess(c,value,current);
@@ -95,6 +95,7 @@ bool TreeSearch::findSol(Sudoku* problem, bool applySol){
 					finished = true;
 				}
 				break;
+            default:;
 		}
 		
 	}
@@ -111,39 +112,24 @@ bool TreeSearch::findSol(Sudoku* problem, bool applySol){
 // Generate a list a 'hints' defining a random problem with unique solution
 vector<Guess> TreeSearch::generateHints(Sudoku* problem){
     
-    
-    
-    
     // Start by finding a random solution (normally from an empty problem)
     // This is very similar to findSol(problem, false)
     // Possible to avoid duplicate code?
     Sudoku* current = new Sudoku(*problem);
     bool finished = false;
     while (!finished) {
-//        cout << "in while\n";
         checkResult check = current->checkObvious(); // do all obvious checks until no more progress or error...
         switch (check){
             case FOUND_NOTHING:
                 // no more obvious move
-//                bool checkPart = false;
-//                checkPart |= current->checkAllPartRow();
-//                checkPart |= current->checkAllPartCol();
-//                checkPart |= current->checkAllPartBlock();
-//                if (checkPart) {
-//                    cout << "found part\n";
-//                    break;
-//                }
-//                if (current->checkAllPart()) {
-////                    cout << "found part\n";
-//                    break;
-//                }
-//                cout << "found no part\n";
+                if (current->checkAllPart()) {
+                    break;
+                }
                 Coord c;
-                if (current->getRandomUnknown(c)) {							// Seach randomly to generate random problems
+                if (current->getRandomUnknown(c)) {						// Seach randomly to generate random problems
                     // there's still some undetermined box >> make a new guess
                     int value = current->getRandomCand(c.row,c.col);	// Seach randomly to generate random problems
                     newGuess(c,value,current);
-                    Guess guess = {c,value};
                     current->update(c.row,c.col,value);
                 }
                 else {
@@ -155,26 +141,9 @@ vector<Guess> TreeSearch::generateHints(Sudoku* problem){
                 // reached a dead-end
                 backtrack(current);
                 break;
+            default:;
         }
     }
-    
-    //	string filePath = "/Users/Julien/Desktop/Sudoku/log.txt";
-    //	std::ofstream file(filePath);
-    //	if (!file) {
-    //		cerr << "Input file could not be opened!" << endl;
-    //		exit(1);
-    //	}
-    //	file << "total depth: " << depth << endl;
-    //
-    //	for (int i=0; i<depth; i++) {
-    //		file << "depth " << i <<":\n";
-    //		while (!log[i].empty()) {
-    //			Guess g = log[i].top();
-    //			file << g.value+1 << " at " << g.coord.row+1 << g.coord.col+1 << endl;
-    //			log[i].pop();
-    //		}
-    //		file << endl;
-    //	}
     
     // bactrack to check wether all guesses wouldn't actually have been forced
     vector<Guess> hints;	// contains the hints already identified as necessary
@@ -238,6 +207,8 @@ NumSol TreeSearch::findAllSol(const Sudoku* problem){
 						case UNIQUE:
 							nSol = SEVERAL;
 							finished = true;
+                            break;
+                        default:;
 					}
 				}
 				break;
@@ -248,6 +219,7 @@ NumSol TreeSearch::findAllSol(const Sudoku* problem){
 					finished = true;
 				}
 				break;
+            default:;
 		}
 		
 	}

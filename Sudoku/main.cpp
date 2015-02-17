@@ -40,36 +40,44 @@ int main(){
     //	Sudoku problem(filePath);
     
     
-    	srand(unsigned(time(0)));
+    srand(unsigned(time(0)));
     
-    	for (int i=0; i<100;i++) {
+    double solve = 0;
+    double gen = 0;
     
-    		iStart = clock();
-    		Sudoku problem;	// generates a random problem
-    		//		problem.displaySol();
-    		duration = ( clock() - iStart ) / (double) CLOCKS_PER_SEC;
-    		cout << i << " generation: " << duration << '\n';
-    		assert(duration<1);
-    
-    		iStart = clock();
-    		problem.solve();
-    		assert(problem.finalCheck());
-    		//		problem.displaySol();
-    		assert(problem.findAllSol()==UNIQUE);
-    		duration = ( clock() - iStart ) / (double) CLOCKS_PER_SEC;
-    		cout << i << " solving: " << duration << '\n';
-    		assert(duration<1);
-    
-    		cout << endl;
-    	}
+    for (int i=0; i<100;i++) {
+        
+        iStart = clock();
+        Sudoku problem;	// generates a random problem
+//        problem.displaySol();
+        duration = ( clock() - iStart ) / (double) CLOCKS_PER_SEC;
+        gen += duration;
+        cout << i << " generation: " << duration << '\n';
+        //        assert(duration<1);
+        
+        iStart = clock();
+        problem.solve();
+//        assert(problem.finalCheck());
+//        problem.displaySol();
+//        assert(problem.findAllSol()==UNIQUE);
+        duration = ( clock() - iStart ) / (double) CLOCKS_PER_SEC;
+        solve += duration;
+        cout << i << " solving: " << duration << '\n';
+        //        assert(duration<1);
+        
+        cout << endl;
+    }
     
     
     
     ////////////////////////////
     
     
-    duration = ( clock() - start ) / (double) CLOCKS_PER_SEC;
-    cout << "total duration: " << duration << '\n';
+    //    duration = ( clock() - start ) / (double) CLOCKS_PER_SEC;
+    //    cout << "total duration: " << duration << '\n';
+    
+    cout << "total generation duration:\t" << gen << endl;
+    cout << "total solving duration:\t\t" << solve << endl;
     
     //    int ensemble[] = {1,42,3,24};
     //    void (*actionToPerform)(const int*, int) = Partitions::printPart;
@@ -77,7 +85,7 @@ int main(){
     //    actionToPerform(part,4);
     
     
-//    Partitions::printAllParts(SIZE+1,Sudoku::partitions);
+    //    Partitions::printAllParts(SIZE+1,Sudoku::partitions);
     
     return 0;
     
